@@ -1,0 +1,47 @@
+# Render blueprint for the API (free plan). The web app is on Vercel and the database on Neon; see README "Deploy".
+# Values marked sync: false are asked for once when the blueprint is created, then edited under the service's Environment tab.
+services:
+  - type: web
+    name: grps-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    rootDir: grps-api
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health/readiness
+    envVars:
+      # demo seeds the sample graduate school on an empty database (README table). Drop it for a real rollout.
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod,demo
+      # The free instance has 512 MB. A fixed heap leaves room for metaspace and threads; C1-only JIT starts faster.
+      - key: JAVA_TOOL_OPTIONS
+        value: -Xmx300m -Xss512k -XX:MaxMetaspaceSize=150m -XX:+UseSerialGC -XX:TieredStopAtLevel=1
+      - key: SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE
+        value: "5"
+      # Neon direct (unpooled) connection: jdbc:postgresql://<host>/<db>?sslmode=require
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # PEM pair from: openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out jwt-private.pem
+      #                openssl pkey -in jwt-private.pem -pubout -out jwt-public.pem
+      - key: JWT_PRIVATE_KEY
+        sync: false
+      - key: JWT_PUBLIC_KEY
+        sync: false
+      - key: STORAGE_SIGNING_KEY
+        generateValue: true
+      # The Vercel production URL, e.g. https://gradsystem.vercel.app (no trailing slash).
+      - key: WEB_ORIGIN
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: MAIL_ENABLED
+        value: "false"
+      - key: VIRUS_SCAN_MODE
+        value: stub
+      - key: SCREENING_PROVIDER
+        value: stub

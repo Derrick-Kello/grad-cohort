@@ -3,4 +3,3 @@ node_modules
 .env*
 !.env.example
 tsconfig.tsbuildinfo
-fly.toml

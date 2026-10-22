@@ -64,6 +64,32 @@ mkdir -p /tmp/grps-files && python3 grps-api/scripts/make_docs.py /tmp/grps-file
 python3 grps-api/scripts/journeys.py /tmp/grps-files
 ```
 
+## Deploy (free tier)
+
+The web app runs on Vercel, the API on Render (`render.yaml`), and the database on Neon. All three deploy from this repo and redeploy on every push to `main`.
+
+1. **Neon.** Create a project in the Frankfurt region (AWS eu-central-1). Under Connect, turn connection pooling off and note the host, database, user and password. Flyway needs the direct connection.
+2. **JWT keys.** Run this outside the repo. Without the keys, every user is signed out each time the API restarts.
+   ```bash
+   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out jwt-private.pem
+   openssl pkey -in jwt-private.pem -pubout -out jwt-public.pem
+   ```
+3. **Render.** New › Blueprint, pick this repo, and fill in the prompted values:
+   - `DB_URL`: `jdbc:postgresql://<neon-host>/<database>?sslmode=require`
+   - `DB_USER`, `DB_PASSWORD`: from Neon
+   - `JWT_PRIVATE_KEY`, `JWT_PUBLIC_KEY`: paste each `.pem` file whole
+   - `WEB_ORIGIN`, `FRONTEND_URL`: the Vercel URL you'll use in step 4, e.g. `https://gradsystem.vercel.app`
+
+   The first build takes about 10 minutes. When it finishes, `https://<service>.onrender.com/actuator/health` returns `UP`.
+4. **Vercel.** Add New › Project, import this repo, set Root Directory to `gradsystem`, and add `NEXT_PUBLIC_API_URL` = the Render URL (no trailing slash). Deploy.
+5. If Vercel gave a different URL than the one you put in step 3, update `WEB_ORIGIN` and `FRONTEND_URL` on Render. The API only accepts requests from that exact origin, so Vercel preview URLs are blocked.
+
+Limits of the free plans:
+- The API sleeps after 15 minutes without traffic. The first request after that waits for it to start, which takes about a minute.
+- Uploaded files are lost on every restart or deploy, because Render's free disk doesn't persist and the S3 file store isn't written yet.
+- Scheduled jobs (deadlines, reminders, digests) only run while the API is awake.
+- The demo accounts above are created on the first start and all share one published password. Remove `demo` from `SPRING_PROFILES_ACTIVE` before real users get access.
+
 ## How the PRD maps to the code
 
 | PRD area | Backend | Screens |
