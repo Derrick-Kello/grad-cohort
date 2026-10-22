@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/* Design tokens. Status colours always appear with a text label, never alone (PRD section 18). */
+:root {
+  --bg: #f5f7f9;
+  --surface: #ffffff;
+  --surface-2: #f0f3f6;
+  --border: #dde3e9;
+  --border-strong: #c3ccd5;
+  --text: #17202a;
+  --text-muted: #55616d;
+  --text-faint: #7b8692;
+  --primary: #1f4e79;
+  --primary-hover: #183e61;
+  --primary-soft: #e6eef6;
+  --primary-text: #ffffff;
+  --focus: #2f6db5;
+
+  --ok: #1d6b3f;
+  --ok-bg: #e5f3ea;
+  --warn: #8a5300;
+  --warn-bg: #fdf1dc;
+  --bad: #a3261f;
+  --bad-bg: #fbe7e5;
+  --info: #1f4e79;
+  --info-bg: #e6eef6;
+  --muted: #55616d;
+  --muted-bg: #eceff2;
+
+  --sidebar-bg: #102a43;
+  --sidebar-text: #c9d6e3;
+  --sidebar-text-strong: #ffffff;
+  --sidebar-active: #1f4e79;
+  --sidebar-hover: #173653;
+
+  --shadow: 0 1px 2px rgba(16, 42, 67, 0.06), 0 1px 3px rgba(16, 42, 67, 0.08);
+  --shadow-lg: 0 10px 30px rgba(16, 42, 67, 0.18);
+  --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1419;
+    --surface: #161d24;
+    --surface-2: #1c252e;
+    --border: #2a3540;
+    --border-strong: #3a4755;
+    --text: #e6ebf0;
+    --text-muted: #a7b2bd;
+    --text-faint: #7f8b97;
+    --primary: #5b9bd5;
+    --primary-hover: #77afe0;
+    --primary-soft: #1a2e42;
+    --primary-text: #0b1620;
+    --focus: #8cc0ee;
+
+    --ok: #7fd3a0;
+    --ok-bg: #143322;
+    --warn: #f2c070;
+    --warn-bg: #3a2a10;
+    --bad: #f39a92;
+    --bad-bg: #3d1916;
+    --info: #9cc6ec;
+    --info-bg: #1a2e42;
+    --muted: #b0bac4;
+    --muted-bg: #242e38;
+
+    --sidebar-bg: #0b1116;
+    --sidebar-text: #a7b2bd;
+    --sidebar-text-strong: #ffffff;
+    --sidebar-active: #1d3a57;
+    --sidebar-hover: #15202b;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--primary-text);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-bad: var(--bad);
+  --color-bad-bg: var(--bad-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-grey: var(--muted);
+  --color-grey-bg: var(--muted-bg);
+  --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-strong: var(--sidebar-text-strong);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--primary-soft);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

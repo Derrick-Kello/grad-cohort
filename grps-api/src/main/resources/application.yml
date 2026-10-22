@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: grps-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/grps}
+    username: ${DB_USER:grps}
+    password: ${DB_PASSWORD:grps}
+  jpa:
+    open-in-view: false
+    hibernate.ddl-auto: validate
+    properties.hibernate.jdbc.time_zone: UTC
+  flyway.enabled: true
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+  servlet.multipart:
+    max-file-size: 50MB
+    max-request-size: 260MB
+  jackson:
+    default-property-inclusion: always
+    serialization.write-dates-as-timestamps: false
+  threads.virtual.enabled: false
+  mvc.async.request-timeout: 1800000
+
+server:
+  port: ${PORT:8080}
+  error.include-message: never
+  forward-headers-strategy: framework
+
+grps:
+  timezone: Africa/Accra
+  web-origin: ${WEB_ORIGIN:http://localhost:3000}
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+  dev-tools: ${GRPS_DEV_TOOLS:false}
+  jwt:
+    private-key: ${JWT_PRIVATE_KEY:}
+    public-key: ${JWT_PUBLIC_KEY:}
+    access-ttl: 15m
+    refresh-ttl: 7d
+  storage:
+    type: ${STORAGE_TYPE:local}
+    dir: ${STORAGE_DIR:./data/files}
+    signing-key: ${STORAGE_SIGNING_KEY:change-me-local-only-signing-key}
+    link-ttl: 10m
+  screening:
+    provider: ${SCREENING_PROVIDER:stub}   # stub | turnitin
+  virus-scan:
+    mode: ${VIRUS_SCAN_MODE:stub}          # stub | clamav
+    host: ${CLAMAV_HOST:localhost}
+    port: ${CLAMAV_PORT:3310}
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:GRPS <no-reply@grps.local>}
+
+management.endpoints.web.exposure.include: health,info,metrics
+management.endpoint.health.probes.enabled: true
+
+springdoc:
+  swagger-ui.path: /swagger-ui.html
+  api-docs.path: /v3/api-docs
+
+logging:
+  level:
+    edu.university.grps: INFO
+    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: ERROR
+
+---
+spring.config.activate.on-profile: local
+grps:
+  dev-tools: true
+logging.pattern.console: "%d{HH:mm:ss.SSS} %-5level [%X{traceId:-}] %logger{30} - %msg%n"
+
+---
+spring.config.activate.on-profile: staging,prod
+logging.structured.format.console: ecs
+grps:
+  dev-tools: false

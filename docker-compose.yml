@@ -1,0 +1,29 @@
+# Local services from the PRD (section 26). The API and web app run on the host during development:
+#   cd grps-api && ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+#   cd gradsystem && npm run dev
+# To use ClamAV and MailHog from this stack, start the API with VIRUS_SCAN_MODE=clamav and MAIL_ENABLED=true.
+# MinIO is here for the S3-compatible file store; the API currently stores files on local disk (see README).
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: grps
+      POSTGRES_USER: grps
+      POSTGRES_PASSWORD: grps
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: grps
+      MINIO_ROOT_PASSWORD: grps-secret
+    ports: ["9000:9000", "9001:9001"]
+  mailhog:
+    image: mailhog/mailhog
+    ports: ["1025:1025", "8025:8025"]
+  clamav:
+    image: clamav/clamav
+    ports: ["3310:3310"]
+volumes:
+  pgdata:
